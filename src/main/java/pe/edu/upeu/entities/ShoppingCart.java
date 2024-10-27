@@ -18,6 +18,7 @@ public class ShoppingCart {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Getter
     @Setter
+
     private String id;
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @Getter @Setter

@@ -17,41 +17,50 @@ import java.util.Optional;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
+
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
+
     @GetMapping("/{product_id}")
-    public ResponseEntity<Object> getProductById(@PathVariable("product_id")String productId){
+    public ResponseEntity<Object> getProductById(@PathVariable("product_id") String productId) {
         Optional<Product> productOptional = this.productService.getProductById(productId);
         if (productOptional.isEmpty())
             return new ResponseEntity<>(new Message("No encontrado"), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(productOptional.get(),HttpStatus.OK);
+        return new ResponseEntity<>(productOptional.get(), HttpStatus.OK);
     }
+
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllProducts(){
-        return new ResponseEntity<>(this.productService.getAllProducts(),HttpStatus.OK);
+    public ResponseEntity<Object> getAllProducts() {
+        return new ResponseEntity<>(this.productService.getAllProducts(), HttpStatus.OK);
     }
+
     @GetMapping("/best")
-    public ResponseEntity<List<Product>> getBestProducts(){
-        return new ResponseEntity<>(this.productService.getBestPriceProducts(),HttpStatus.OK);
+    public ResponseEntity<List<Product>> getBestProducts() {
+        return new ResponseEntity<>(this.productService.getBestPriceProducts(), HttpStatus.OK);
     }
+
     @GetMapping("/related/{category}/{product_id}")
-    public ResponseEntity<Object> getRelatedProduct(@PathVariable("category")String category, @PathVariable("product_id")String productId){
-        return new ResponseEntity<>(this.productService.getRelatedProducts(category,productId),HttpStatus.OK);
+    public ResponseEntity<Object> getRelatedProduct(@PathVariable("category") String category, @PathVariable("product_id") String productId) {
+        return new ResponseEntity<>(this.productService.getRelatedProducts(category, productId), HttpStatus.OK);
     }
+
     @PostMapping("/create")
-    public ResponseEntity<Message> createProduct(@Valid @RequestBody Product product, BindingResult bindingResult){
-        if (bindingResult.hasErrors())
-            return new ResponseEntity<>(new Message("Revise los campos"),HttpStatus.BAD_REQUEST);
-        this.productService.saveProduct(product);
-        return new ResponseEntity<>(new Message("Creado correctamente"),HttpStatus.OK);
+    public ResponseEntity<Message> createProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(new Message("Revise los campos"), HttpStatus.BAD_REQUEST);
+        }
+        Product savedProduct = this.productService.saveProduct(product); // Captura el producto guardado
+        return new ResponseEntity<>(new Message("Producto '" + savedProduct.getName() + "' creado correctamente"), HttpStatus.CREATED);
     }
+
+
     @PutMapping("/update")
-    public ResponseEntity<Message> updateProduct(@Valid @RequestBody Product product, BindingResult bindingResult){
+    public ResponseEntity<Object> updateProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return new ResponseEntity<>(new Message("Revise los campos"),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise los campos"), HttpStatus.BAD_REQUEST);
         this.productService.saveProduct(product);
-        return new ResponseEntity<>(new Message("Actualizado correctamente"),HttpStatus.OK);
+        return new ResponseEntity<>(new Message("Actualizado correctamente"), HttpStatus.OK);
     }
 }

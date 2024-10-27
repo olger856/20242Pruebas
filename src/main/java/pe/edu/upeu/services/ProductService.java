@@ -32,8 +32,8 @@ public class ProductService {
         }
         return randomProducts;
     }
-    public void saveProduct(Product product){
-        this.productRepository.save(product);
+    public Product saveProduct(Product product) {
+        return this.productRepository.save(product);
     }
     public List<Product> getAllProducts(){
         return this.productRepository.findAll();
